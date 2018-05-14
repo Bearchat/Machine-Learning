@@ -15,12 +15,37 @@ weight2=[10,1]
 bais2=[1,1]
 """
 
-
 import tensorflow as tf
 import numpy as np
 
+"""
+
+https://www.jianshu.com/p/e112012a4b2d
+
+神经网络解决问题步骤： 
+1.提取问题中实体的特征向量作为神经网络的输入。也就是说要对数据集进行特征工程，然后知道每个样本的特征维度，以此来定义输入神经元的个数。 
+2.定义神经网络的结构，并定义如何从神经网络的输入得到输出。也就是说定义输入层，隐藏层以及输出层。 
+3.通过训练数据来调整神经网络中的参数取值，这是训练神经网络的过程。一般来说要定义模型的损失函数，以及参数优化的方法，如交叉熵损失函数和梯度下降法调优等。 
+4.利用训练好的模型预测未知的数据。也就是评估模型的好坏。
+
+
+搭建神经网络的基本流程
+
+定义添加神经层的函数
+
+1.训练的数据
+2.定义节点准备接收数据
+3.定义神经层：隐藏层和预测层
+4.定义 loss 表达式
+5.选择 optimizer 使 loss 达到最小
+
+"""
+
+
+# 添加层
 def add_layer(inputs, in_size, out_size, activation_function=None):
     # add one more layer and return the output of this layer
+    # 定义出参数 Weights，biases，拟合公式 Wx_plus_b
     Weights = tf.Variable(tf.random_normal([in_size, out_size]))
     biases = tf.Variable(tf.zeros([1, out_size]) + 0.1)
     Wx_plus_b = tf.matmul(inputs, Weights) + biases
@@ -30,28 +55,32 @@ def add_layer(inputs, in_size, out_size, activation_function=None):
         outputs = activation_function(Wx_plus_b)
     return outputs
 
-# 构造一个数据集
-x_data = np.linspace(-1,1,300)[:, np.newaxis]
+
+# 构造一个数据集(训练的数据)
+x_data = np.linspace(-1, 1, 300)[:, np.newaxis]
 noise = np.random.normal(0, 0.05, x_data.shape)
 y_data = np.square(x_data) - 0.5 + noise
 
-# placeholder 占个位
+# placeholder 占个位(定义节点准备接收数据 -- 输入层)
 xs = tf.placeholder(tf.float32, [None, 1])
 ys = tf.placeholder(tf.float32, [None, 1])
 
-# add hidden layer
+# 定义神经层:隐藏层和预测层
+# add hidden layer  输入值是xs, 在隐藏层有10个神经元,激活函数使用 tf.nn.relu
 l1 = add_layer(xs, 1, 10, activation_function=tf.nn.relu)
-
 # add output layer
-# 上一层的输出是这一层的输入
+# 上一层的输出是这一层的输入  输入值是隐藏层 l1,在预测层输出1个结果
 prediction = add_layer(l1, 10, 1, activation_function=None)
 
+# 定义loss函数
 # the error between prediction and real data
-#loss函数和使用梯度下降的方式来求解
-loss = tf.reduce_mean(tf.reduce_sum(tf.square(ys - prediction),reduction_indices=[1]))
-train_step = tf.train.GradientDescentOptimizer(0.1).minimize(loss)
+# loss函数和使用梯度下降的方式来求解
+loss = tf.reduce_mean(tf.reduce_sum(tf.square(ys - prediction), reduction_indices=[1]))
 
-# important step
+optimizer = tf.train.GradientDescentOptimizer(0.1) # 选择 Gradient Descent 这个最基本的 Optimizer：
+train_step = optimizer.minimize(loss) # 神经网络的 key idea，就是让 loss 达到最小：
+
+# important step  对所有变量进行初始化
 # tf.initialize_all_variables() no long valid from
 # 2017-03-02 if using tensorflow >= 0.12
 
@@ -61,12 +90,16 @@ else:
     init = tf.global_variables_initializer()
 
 sess = tf.Session()
+
+# 上面的定义的并没有开始运算,知道sess.run 蔡开始运算
 sess.run(init)
 
+
+# 迭代1000次学习，sess.run.optimizer
 for i in range(1000):
-    # trainings
+    # training train_step 和 loss 都是由 placeholder 定义的运算，所以这里要用 feed 传入参数
     sess.run(train_step, feed_dict={xs: x_data, ys: y_data})
     if i % 50 == 0:
         # to see the step improvement
         # 在带有placeholder的变量里面，每一次sess.run 都需要给一个feed_dict，这个不能省略啊！
-        print("loss : ",sess.run(loss, feed_dict={xs: x_data, ys: y_data}))
+        print("loss : ", sess.run(loss, feed_dict={xs: x_data, ys: y_data}))

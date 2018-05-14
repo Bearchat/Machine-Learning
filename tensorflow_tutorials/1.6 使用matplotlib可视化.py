@@ -17,10 +17,10 @@ bais2=[1,1]
 网络的结构和1.5的内容是一样的，只不过是这一次把每次的训练结构可视化show出来了
 """
 
-
 import tensorflow as tf
 import numpy as np
 import matplotlib.pyplot as plt
+
 
 def add_layer(inputs, in_size, out_size, activation_function=None):
     Weights = tf.Variable(tf.random_normal([in_size, out_size]))
@@ -31,6 +31,7 @@ def add_layer(inputs, in_size, out_size, activation_function=None):
     else:
         outputs = activation_function(Wx_plus_b)
     return outputs
+
 
 # Make up some real data
 x_data = np.linspace(-1, 1, 300)[:, np.newaxis]
@@ -49,7 +50,7 @@ l1 = add_layer(xs, 1, 10, activation_function=tf.nn.relu)
 prediction = add_layer(l1, 10, 1, activation_function=None)
 
 # the error between prediction and real data
-loss = tf.reduce_mean(tf.reduce_sum(tf.square(ys-prediction), reduction_indices=[1]))
+loss = tf.reduce_mean(tf.reduce_sum(tf.square(ys - prediction), reduction_indices=[1]))
 train_step = tf.train.GradientDescentOptimizer(0.1).minimize(loss)
 # important step
 sess = tf.Session()
@@ -62,7 +63,7 @@ else:
 sess.run(init)
 
 # plot the real data
-plt.scatter(x_data,y_data)
+plt.scatter(x_data, y_data)
 
 for i in range(1000):
     # training

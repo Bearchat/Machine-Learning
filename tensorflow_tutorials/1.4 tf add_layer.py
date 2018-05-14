@@ -1,9 +1,8 @@
+from __future__ import print_function  # 必须要放在文件的第一行！！！
 import tensorflow as tf
 
-#定义添加神经层的函数def add_layer(),它有四个参数：输入值、输入的大小、输出的大小和激励函数
-#我们设定默认的激励函数是None
-from __future__ import print_function
-import tensorflow as tf
+# 定义添加神经层的函数def add_layer(),它有四个参数：输入值、输入的大小、输出的大小和激励函数
+# 我们设定默认的激励函数是None
 
 # 个人的看法，在每一层做计算的时候，要搞清楚矩阵的维度
 # 这个的表示方式和吴恩达教程上面的表示方式是相反的
@@ -17,6 +16,8 @@ input*weigths=[n,3] + bias=[1,3] ，这样的矩阵维度相加的时候，pytho
 
 so,这一层的输出的维度是 [n,3]
 """
+
+
 def add_layer(inputs, in_size, out_size, activation_function=None):
     Weights = tf.Variable(tf.random_normal([in_size, out_size]))
     biases = tf.Variable(tf.zeros([1, out_size]) + 0.1)

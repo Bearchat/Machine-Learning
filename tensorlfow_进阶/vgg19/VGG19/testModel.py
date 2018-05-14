@@ -11,11 +11,11 @@ import os
 import urllib.request
 import argparse
 import sys
-import vgg19
 import cv2
 import tensorflow as tf
 import numpy as np
-import caffe_classes
+
+from tensorlfow_进阶.vgg19.VGG19 import caffe_classes, vgg19
 
 parser = argparse.ArgumentParser(description='Classify some images.')
 parser.add_argument('mode', choices=['folder', 'url'], default='folder')

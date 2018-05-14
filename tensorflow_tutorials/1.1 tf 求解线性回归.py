@@ -5,33 +5,41 @@ import tensorflow as tf
 import numpy as np
 
 # create data
-# 创建一个随机的数据集
-x_data = np.random.rand(100).astype(np.float32)
+# 创建一个随机的数据集, 导入或者随机定义训练的数据 x 和 y
+x_data = np.random.rand(100).astype(np.float32)  # astype Copy of the array, cast to a specified type.
 y_data = x_data*0.1 + 0.3
 
 # 随机初始化 权重
 Weights = tf.Variable(tf.random_uniform([1], -1.0, 1.0))
 biases = tf.Variable(tf.zeros([1]))
 
-# 估计的y值
+# 估计的y值(拟合公式 y)
 y = Weights*x_data + biases
 
-# 估计的y和真实的y，计算cost
+# 估计的y和真实的y，计算cost (误差公式 loss)
 loss = tf.reduce_mean(tf.square(y-y_data))
 
+
+
+
 # 梯度下降优化
+
+# 选择 Gradient Descent 这个最基本的 Optimizer：
 optimizer = tf.train.GradientDescentOptimizer(0.5)  # 0.5 学习率
+
+# 神经网络的 key idea，就是让 loss 达到最小：
 train = optimizer.minimize(loss)
 
 """
 到目前为止, 我们只是建立了神经网络的结构, 还没有使用这个结构. 
+前面是定义，在运行模型前先要初始化所有变量：
 在使用这个结构之前, 我们必须先初始化所有之前定义的Variable, 所以这一步是很重要的
 """
 # init = tf.initialize_all_variables() # tf 马上就要废弃这种写法
-init = tf.global_variables_initializer()  # 替换成这样就好
+init = tf.global_variables_initializer()  # 替换成这样就好(如果声明的有变量时 一定要先初始化之前定义的 Variable  ！！！)
 
 
-
+# 接下来把结构激活，sesseion像一个指针指向要处理的地方：
 #创建会话
 sess = tf.Session()
 sess.run(init)          #  用 Session来 run 每一次 training 的数据.
