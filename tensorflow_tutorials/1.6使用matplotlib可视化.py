@@ -15,6 +15,10 @@ weight2=[10,1]
 bais2=[1,1]
 
 网络的结构和1.5的内容是一样的，只不过是这一次把每次的训练结构可视化show出来了
+https://morvanzhou.github.io/tutorials/machine-learning/tensorflow/3-3-visualize-result/
+
+https://github.com/MorvanZhou/Tensorflow-Tutorial/blob/master/tutorial-contents/301_simple_regression.py
+
 """
 
 import tensorflow as tf
@@ -38,12 +42,10 @@ x_data = np.linspace(-1, 1, 300)[:, np.newaxis]
 noise = np.random.normal(0, 0.05, x_data.shape)
 y_data = np.square(x_data) - 0.5 + noise
 
-##plt.scatter(x_data, y_data)
-##plt.show()
-
 # define placeholder for inputs to network
 xs = tf.placeholder(tf.float32, [None, 1])
 ys = tf.placeholder(tf.float32, [None, 1])
+
 # add hidden layer
 l1 = add_layer(xs, 1, 10, activation_function=tf.nn.relu)
 # add output layer
@@ -63,14 +65,41 @@ else:
 sess.run(init)
 
 # plot the real data
-plt.scatter(x_data, y_data)
+# fig = plt.figure()
+# ax = fig.add_subplot(1,1,1)
+# ax.scatter(x_data, y_data)
+# plt.ion()#本次运行请注释，全局运行不要注释
+# plt.show()
+
 
 for i in range(1000):
     # training
-    sess.run(train_step, feed_dict={xs: x_data, ys: y_data})
-    if i % 50 == 0:
-        prediction_value = sess.run(prediction, feed_dict={xs: x_data})
-        # plot the prediction
-        plt.plot(x_data, prediction_value)
+    # sess.run(train_step, feed_dict={xs: x_data, ys: y_data})
 
+    _, l, pred = sess.run([train_step, loss, prediction], {xs: x_data, ys: y_data})  # 方法二
+    if i % 50 == 0:
+        # 密集线簇
+        # prediction_value = sess.run(prediction, feed_dict={xs: x_data})
+        # # plot the prediction
+        # plt.plot(x_data, prediction_value)
+
+        # 方法一: 动态展示拟合曲线
+        # to visualize the result and improvement
+        # try:
+        #     ax.lines.remove(lines[0])
+        # except Exception:
+        #     pass
+        # prediction_value = sess.run(prediction, feed_dict={xs: x_data})
+        # # plot the prediction
+        # lines = ax.plot(x_data, prediction_value, 'r-', lw=3)
+        # plt.pause(0.1)
+
+        # 方法二: 动态展示拟合曲线 散点图和线图放到一块
+        # https://github.com/MorvanZhou/Tensorflow-Tutorial/blob/master/tutorial-contents/301_simple_regression.py
+        plt.cla()
+        plt.scatter(x_data, y_data)
+        plt.plot(x_data, pred, 'r-', lw=5)
+        plt.text(0.5, 0, 'Loss=%.4f' % l, fontdict={'size': 20, 'color': 'red'})
+        plt.pause(0.1)
+plt.ioff()  # 图形展示完之后不会自动退出关掉
 plt.show()

@@ -4,6 +4,9 @@ from sklearn.datasets import load_digits
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelBinarizer
 
+"""
+Overfitting 也被称为过度学习，过度拟合。 它是机器学习中常见的问题
+"""
 # load data
 digits = load_digits()
 X = digits.data
@@ -29,7 +32,7 @@ def add_layer(inputs, in_size, out_size, layer_name, activation_function=None, )
 
 
 # define placeholder for inputs to network
-keep_prob = tf.placeholder(tf.float32)
+keep_prob = tf.placeholder(tf.float32)  # keep_prob是保留概率 即我们要保留的结果所占比例
 xs = tf.placeholder(tf.float32, [None, 64])  #输入数据的特征是8*8
 ys = tf.placeholder(tf.float32, [None, 10])  #输入数据是10个类别
 

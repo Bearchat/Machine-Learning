@@ -114,7 +114,6 @@ sess = tf.Session()
 sess.run(init)
 
 
-# 画图查看拟合效果  有问题!!!
 fig = plt.figure()
 bx = fig.add_subplot(1, 1, 1)
 bx.scatter(x_data, y_data)  # scatter 散点图
@@ -130,16 +129,3 @@ for i in range(1000):
         # 在带有placeholder的变量里面，每一次sess.run 都需要给一个feed_dict，这个不能省略啊！
         print("loss : ", sess.run(loss, feed_dict={xs: x_data, ys: y_data}))
 
-        bx.plot(x_data, prediction, 'g-', lw=5)  # plot线图 # AttributeError: 'Tensor' object has no attribute 'ndim'
-        plt.xlabel('x_data')
-        plt.ylabel('y_data')
-        plt.show()
-
-# # 画图查看拟合效果  有问题!!!
-# fig = plt.figure()
-# bx = fig.add_subplot(1, 1, 1)
-# bx.scatter(x_data, y_data)  # scatter 散点图
-# bx.plot(x_data, prediction, 'g-', lw=6)  # plot线图
-# plt.xlabel('x_data')
-# plt.ylabel('y_data')
-# plt.show()
