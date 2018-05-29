@@ -46,7 +46,7 @@ learning_rate = 0.0001  # with current parameters, it is suggested to use learni
 # %%
 def run_training():
 	# you need to change the directories to yours.
-	train_dir = '/home/kevin/tensorflow/cats_vs_dogs/data/train/'
+	train_dir = r'F:\DataResposity\dogs-vs-cats\train'
 	logs_train_dir = '/home/kevin/tensorflow/cats_vs_dogs/logs/train/'
 
 	train, train_label = input_data.get_files(train_dir)
@@ -93,6 +93,8 @@ def run_training():
 
 	coord.join(threads)
 	sess.close()
+
+run_training()
 
 # %% Evaluate one image
 # when training, comment the following codes.

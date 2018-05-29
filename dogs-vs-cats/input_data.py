@@ -125,14 +125,14 @@ def test():
 	IMG_W = 208
 	IMG_H = 208
 
-	train_dir = r'F:\DataResposity\dogs-vs-cats\train'
+	train_dir = r'D:\WorkSpace\PythonHome\Machine-Learning\dogs-vs-cats\data\train'
 	image_list, label_list = get_files(train_dir)  # 读取数据和标签
 	image_batch, label_batch = get_batch(image_list, label_list, IMG_W, IMG_H, BATCH_SIZE, CAPACITY)  # 将图片分批次
 
 	with tf.Session() as sess:
 		i = 0
-		coord = tf.train.Coordinator()
-		threads = tf.train.start_queue_runners(coord = coord)
+		coord = tf.train.Coordinator() #  #创建一个协调器，管理线程
+		threads = tf.train.start_queue_runners(coord = coord) # #启动QueueRunner, 此时文件名队列已经进队。
 
 		try:
 			while not coord.should_stop() and i < 1:
@@ -150,7 +150,7 @@ def test():
 			print('done!')
 		finally:
 			coord.request_stop()
-		coord.join(threads)
+		# coord.join(threads)
 
 
 test()
