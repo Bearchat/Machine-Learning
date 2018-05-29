@@ -4,6 +4,7 @@ import numpy as np
 
 # Save to file
 # remember to define the same dtype and shape when restore
+# tf中包含了 numpy 不过 numpy更好有用
 W = tf.Variable([[1,2,3],[3,4,5]], dtype=tf.float32, name='weights')
 b = tf.Variable([[1,2,3]], dtype=tf.float32, name='biases')
 

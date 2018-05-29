@@ -95,8 +95,8 @@ for i in range(5000):
     sess.run(train_step, feed_dict={xs: batch_xs, ys: batch_ys})
     if i % 100 == 0:
         # 注意，这里改成了测试集
-        print('loss -> cross_entropy : ',sess.run(cross_entropy, feed_dict={xs: batch_xs, ys: batch_ys}))
-        # print("第{}次，准确率为{}".format(i + 100, compute_accuracy(mnist.test.images, mnist.test.labels)))
+        # print('loss -> cross_entropy : ',sess.run(cross_entropy, feed_dict={xs: batch_xs, ys: batch_ys}))
+        print("第{}次，准确率为{}".format(i + 100, compute_accuracy(mnist.test.images, mnist.test.labels)))
 
 """
 输出：
