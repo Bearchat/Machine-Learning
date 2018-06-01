@@ -21,35 +21,37 @@ import matplotlib.pyplot as plt
 
 """
 
+train_dir = r'D:\WorkSpace\GithubLocalRepository\Machine-Learning\dogs-vs-cats\data\train'
+
 
 # 读取数据和标签
 def get_files(file_dir):
-	cats = []
-	label_cats = []
-	dogs = []
-	label_dogs = []
-	for file in os.listdir(file_dir):  # 返回文件名
-		name = file.split(sep = '.')  # 文件名按.分割
-		if name[0] == 'cat':  # 如果是cat，标签为0，dog为1
-			cats.append(file_dir + file)
-			label_cats.append(0)
-		else:
-			dogs.append(file_dir + file)
-			label_dogs.append(1)
-	print('There are %d cats\nThere are %d dogs' % (len(cats), len(dogs)))  # 打印猫和狗的数量
+    cats = []
+    label_cats = []
+    dogs = []
+    label_dogs = []
+    for file in os.listdir(file_dir):  # 返回文件名
+        name = file.split(sep='.')  # 文件名按.分割
+        if name[0] == 'cat':  # 如果是cat，标签为0，dog为1
+            cats.append(file_dir + '\\' + file)
+            label_cats.append(0)
+        else:
+            dogs.append(file_dir + '\\' + file)
+            label_dogs.append(1)
+    print('There are %d cats\nThere are %d dogs' % (len(cats), len(dogs)))  # 打印猫和狗的数量
 
-	image_list = np.hstack((cats, dogs))
-	label_list = np.hstack((label_cats, label_dogs))
+    image_list = np.hstack((cats, dogs))
+    label_list = np.hstack((label_cats, label_dogs))
 
-	temp = np.array([image_list, label_list])
-	temp = temp.transpose()
-	np.random.shuffle(temp)  # 打乱图片
+    temp = np.array([image_list, label_list])
+    temp = temp.transpose()
+    np.random.shuffle(temp)  # 打乱图片
 
-	image_list = list(temp[:, 0])
-	label_list = list(temp[:, 1])
-	label_list = [int(i) for i in label_list]  # 将label_list中的数据类型转为int型
+    image_list = list(temp[:, 0])
+    label_list = list(temp[:, 1])
+    label_list = [int(i) for i in label_list]  # 将label_list中的数据类型转为int型
 
-	return image_list, label_list
+    return image_list, label_list
 
 
 # get_files(r'D:\WorkSpace\PythonHome\Machine-Learning\dogs-vs-cats\data\train')
@@ -68,89 +70,89 @@ def get_files(file_dir):
 
 # 将图片分批次
 def get_batch(image, label, image_W, image_H, batch_size, capacity):
-	'''''
-	Args:
-		image: list type
-		label: list type
-		image_W: image width
-		image_H: image height
-		batch_size: batch size
-		capacity: the maximum elements in queue
-	Returns:
-		image_batch: 4D tensor [batch_size, width, height, 3], dtype=tf.float32
-		label_batch: 1D tensor [batch_size], dtype=tf.int32
-	'''
-	# image和label为list类型，需要进行数据类型转换
-	image = tf.cast(image, tf.string)
-	label = tf.cast(label, tf.int32)
+    '''''
+    Args:
+        image: list type
+        label: list type
+        image_W: image width
+        image_H: image height
+        batch_size: batch size
+        capacity: the maximum elements in queue
+    Returns:
+        image_batch: 4D tensor [batch_size, width, height, 3], dtype=tf.float32
+        label_batch: 1D tensor [batch_size], dtype=tf.int32
+    '''
+    # image和label为list类型，需要进行数据类型转换
+    image = tf.cast(image, tf.string)
+    label = tf.cast(label, tf.int32)
 
-	# make an input queue 把image和label合并生成一个队列
-	input_queue = tf.train.slice_input_producer([image, label])
+    # make an input queue 把image和label合并生成一个队列
+    input_queue = tf.train.slice_input_producer([image, label])
 
-	label = input_queue[1]  # 读取label
-	image_contents = tf.read_file(input_queue[0])  # 读取图片
-	image = tf.image.decode_jpeg(image_contents, channels = 3)  # 解码图片
+    label = input_queue[1]  # 读取label
+    image_contents = tf.read_file(input_queue[0])  # 读取图片
+    image = tf.image.decode_jpeg(image_contents, channels=3)  # 解码图片
 
-	######################################
-	# data argumentation should go to here
-	######################################
+    ######################################
+    # data argumentation should go to here
+    ######################################
 
-	# 因为图片大小不一致，需要进行裁剪/扩充
-	image = tf.image.resize_image_with_crop_or_pad(image, image_W, image_H)
+    # 因为图片大小不一致，需要进行裁剪/扩充
+    image = tf.image.resize_image_with_crop_or_pad(image, image_W, image_H)
 
-	# 按照原代码使用标准化报错，注释掉运行正常
-	# image = tf.image.per_image_standardization(image)   #标准化
+    # 按照原代码使用标准化报错，注释掉运行正常
+    # image = tf.image.per_image_standardization(image)   #标准化
 
-	image_batch, label_batch = tf.train.batch([image, label],  # 生成批次
-	                                          batch_size = batch_size,
-	                                          num_threads = 64,
-	                                          capacity = capacity)
+    image_batch, label_batch = tf.train.batch([image, label],  # 生成批次
+                                              batch_size=batch_size,
+                                              num_threads=64,
+                                              capacity=capacity)
 
-	# you can also use shuffle_batch
-	#    image_batch, label_batch = tf.train.shuffle_batch([image,label],
-	#                                                      batch_size=BATCH_SIZE,
-	#                                                      num_threads=64,
-	#                                                      capacity=CAPACITY,
-	#                                                      min_after_dequeue=CAPACITY-1)
+    # you can also use shuffle_batch
+    #    image_batch, label_batch = tf.train.shuffle_batch([image,label],
+    #                                                      batch_size=BATCH_SIZE,
+    #                                                      num_threads=64,
+    #                                                      capacity=CAPACITY,
+    #                                                      min_after_dequeue=CAPACITY-1)
 
-	# 这一步多余，删除无影响
-	# label_batch = tf.reshape(label_batch, [batch_size])
+    # 这一步多余，删除无影响
+    # label_batch = tf.reshape(label_batch, [batch_size])
 
-	return image_batch, label_batch
+    return image_batch, label_batch
 
 
 def test():
-	BATCH_SIZE = 2
-	CAPACITY = 256
-	IMG_W = 208
-	IMG_H = 208
+    BATCH_SIZE = 2
+    CAPACITY = 256
+    IMG_W = 208
+    IMG_H = 208
 
-	train_dir = r'D:\WorkSpace\PythonHome\Machine-Learning\dogs-vs-cats\data\train'
-	image_list, label_list = get_files(train_dir)  # 读取数据和标签
-	image_batch, label_batch = get_batch(image_list, label_list, IMG_W, IMG_H, BATCH_SIZE, CAPACITY)  # 将图片分批次
+    image_list, label_list = get_files(train_dir)  # 读取数据和标签
+    image_batch, label_batch = get_batch(image_list, label_list, IMG_W, IMG_H, BATCH_SIZE, CAPACITY)  # 将图片分批次
 
-	with tf.Session() as sess:
-		i = 0
-		coord = tf.train.Coordinator() #  #创建一个协调器，管理线程
-		threads = tf.train.start_queue_runners(coord = coord) # #启动QueueRunner, 此时文件名队列已经进队。
+    with tf.Session() as sess:
+        i = 0
+        coord = tf.train.Coordinator()  # #创建一个协调器，管理线程
+        threads = tf.train.start_queue_runners(coord=coord)  # #启动QueueRunner, 此时文件名队列已经进队。
 
-		try:
-			while not coord.should_stop() and i < 1:
+        try:
+            while not coord.should_stop() and i < 1:
 
-				img, label = sess.run([image_batch, label_batch])
+                # 获取每一个batch中batch_size个样本和标签
+                img, label = sess.run([image_batch, label_batch])
 
-				# just test one batch
-				for j in np.arange(BATCH_SIZE):
-					print('label: %d' % label[j])  # j-index of quene of Batch_size
-					plt.imshow(img[j, :, :, :])
-					plt.show()
-				i += 1
+                # just test one batch
+                for j in np.arange(BATCH_SIZE):
+                    print('label: %d' % label[j])  # j-index of quene of Batch_size
+                    plt.imshow(img[j, :, :, :])
+                    plt.show()
+                i += 1
 
-		except tf.errors.OutOfRangeError:
-			print('done!')
-		finally:
-			coord.request_stop()
-		# coord.join(threads)
+        except tf.errors.OutOfRangeError:#如果读取到文件队列末尾会抛出此异常  如果捕获这个异常 认为结束
+            print('done!')
+        finally:
+            coord.request_stop() # # 协调器coord发出所有线程终止信号
+    coord.join(threads) #把开启的线程加入主线程，等待threads结束
 
 
 test()
