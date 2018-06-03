@@ -109,4 +109,3 @@ for i in range(5000):
 	if i % 100 == 0:
 		# print(compute_accuracy(mnist.test.images[:1000], mnist.test.labels[:1000]))
 		print("第{}次，准确率为{}".format(i + 100, compute_accuracy(mnist.test.images[:1000], mnist.test.labels[:1000])))
-

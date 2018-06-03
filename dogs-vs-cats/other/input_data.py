@@ -21,7 +21,7 @@ import matplotlib.pyplot as plt
 
 """
 
-train_dir = r'D:\WorkSpace\GithubLocalRepository\Machine-Learning\dogs-vs-cats\data\train'
+train_dir = os.getcwd()+'/data/train/'
 
 
 # 读取数据和标签
@@ -33,10 +33,10 @@ def get_files(file_dir):
     for file in os.listdir(file_dir):  # 返回文件名
         name = file.split(sep='.')  # 文件名按.分割
         if name[0] == 'cat':  # 如果是cat，标签为0，dog为1
-            cats.append(file_dir + '\\' + file)
+            cats.append(file_dir  + file)
             label_cats.append(0)
         else:
-            dogs.append(file_dir + '\\' + file)
+            dogs.append(file_dir + file)
             label_dogs.append(1)
     print('There are %d cats\nThere are %d dogs' % (len(cats), len(dogs)))  # 打印猫和狗的数量
 
@@ -100,8 +100,8 @@ def get_batch(image, label, image_W, image_H, batch_size, capacity):
     # 因为图片大小不一致，需要进行裁剪/扩充
     image = tf.image.resize_image_with_crop_or_pad(image, image_W, image_H)
 
-    # 按照原代码使用标准化报错，注释掉运行正常
-    # image = tf.image.per_image_standardization(image)   #标准化
+    # 标准化
+    image = tf.image.per_image_standardization(image)   #标准化
 
     image_batch, label_batch = tf.train.batch([image, label],  # 生成批次
                                               batch_size=batch_size,
@@ -136,7 +136,7 @@ def test():
         threads = tf.train.start_queue_runners(coord=coord)  # #启动QueueRunner, 此时文件名队列已经进队。
 
         try:
-            while not coord.should_stop() and i < 1:
+            while not coord.should_stop() and i < 2:
 
                 # 获取每一个batch中batch_size个样本和标签
                 img, label = sess.run([image_batch, label_batch])
